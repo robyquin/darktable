@@ -10,20 +10,23 @@ Native build using MSYS2
 
 How to make a darktable Windows installer (x64 only; Windows 8.1 will need to have [UCRT installed](https://support.microsoft.com/en-us/topic/update-for-universal-c-runtime-in-windows-c0514201-7fe6-95a3-b0a5-287930f3560c)):
 
-* Install MSYS2 (instructions and prerequisites can be found on the official website: https://www.msys2.org)
+* Install MSYS2 (instructions and prerequisites can be found on the official website: <https://www.msys2.org>)
 
 * Start the MSYS terminal and update the base system until no further updates are available by repeating:
+
     ```bash
     pacman -Syu
     ```
 
 * From the MSYS terminal, install x64 developer tools, x86_64 toolchain and git:
+
     ```bash
     pacman -S --needed base-devel git intltool po4a
     pacman -S --needed mingw-w64-ucrt-x86_64-{cc,cmake,gcc-libs,ninja,nsis,omp}
     ```
 
 * Install required libraries and dependencies for darktable:
+
     ```bash
     pacman -S --needed mingw-w64-ucrt-x86_64-{libxslt,python-jsonschema,curl,drmingw,exiv2,gettext,gmic,graphicsmagick,gtk3,icu,imath,iso-codes,lcms2,lensfun,libavif,libgphoto2,libheif,libjpeg-turbo,libjxl,libpng,libraw,librsvg,libsecret,libtiff,libwebp,libxml2,lua,openexr,openjpeg2,osm-gps-map,pugixml,sqlite3,zlib}
     ```
@@ -31,46 +34,55 @@ How to make a darktable Windows installer (x64 only; Windows 8.1 will need to ha
 * Install optional libraries and dependencies:
 
     for cLUT
+
     ```bash
     pacman -S --needed mingw-w64-ucrt-x86_64-gmic
     ```
+
     for NG input with midi or gamepad devices
+
     ```bash
     pacman -S --needed mingw-w64-ucrt-x86_64-{portmidi,SDL2}
     ```
 
 * Install optional libraries required for [testing](../../src/tests/unittests):
+
     ```bash
     pacman -S --needed mingw-w64-ucrt-x86_64-cmocka
     ```
 
 * Switch to the UCRT64 terminal and update your lensfun database:
+
     ```bash
     lensfun-update-data
     ```
 
 * For libgphoto2 tethering:
-    * You might need to restart the UCRT64 terminal to have CAMLIBS and IOLIBS environment variables properly set.
+  * You might need to restart the UCRT64 terminal to have CAMLIBS and IOLIBS environment variables properly set.
     Make sure they aren't pointing into your normal Windows installation in case you already have darktable installed.
     You can check them with:
+
         ```bash
         echo $CAMLIBS
         echo $IOLIBS
         ```
-        * If you have to set them manually you can do so by setting the variables in your `~/.bash_profile`. For example (check your version numbers first):
+    * If you have to set them manually you can do so by setting the variables in your `~/.bash_profile`. For example (check your version numbers first):
+
             ```
             export CAMLIBS="$MINGW_PREFIX/lib/libgphoto2/2.5.30/"
             export IOLIBS="$MINGW_PREFIX/lib/libgphoto2_port/0.12.1/"
             ```
-        * If you do so, execute the following command to activate those profile changes:
+    * If you do so, execute the following command to activate those profile changes:
+
             ```bash
             . .bash_profile
             ```
 
-    * Also use this program to install the USB driver on Windows for your camera (it will replace the current Windows camera driver with the WinUSB driver):
-    https://zadig.akeo.ie
+  * Also use this program to install the USB driver on Windows for your camera (it will replace the current Windows camera driver with the WinUSB driver):
+    <https://zadig.akeo.ie>
 
 * From the UCRT64 terminal, clone the darktable git repository (in this example into `~/darktable`):
+
     ```bash
     cd ~
     git clone https://github.com/darktable-org/darktable.git
@@ -80,27 +92,33 @@ How to make a darktable Windows installer (x64 only; Windows 8.1 will need to ha
     ```
 
 * Finally build and install darktable, either the easy way by using the provided script:
+
     ```bash
     ./build.sh --prefix /opt/darktable --build-type Release --build-generator Ninja --install
     ```
+
     or by performing the steps manually:
+
     ```bash
     cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/darktable -S . -B build
     cmake --build build
     cmake --install build
     ```
-    After this darktable will be installed in `/opt/darktable `directory and can be started by typing `/opt/darktable/bin/darktable.exe` from the UCRT64 terminal.
+
+    After this darktable will be installed in `/opt/darktable`directory and can be started by typing `/opt/darktable/bin/darktable.exe` from the UCRT64 terminal.
 
     *NOTE: If you are using the Lua scripts, build the installer and install darktable.
     The Lua scripts check the operating system and see Windows and expect a Windows shell when executing system commands.
     Running darktable from the UCRT64 terminal gives a bash shell and therefore the commands will not work.*
 
 * For building the installer image, which will create darktable-<VERSION>.exe installer in the current build directory, use:
+
     ```bash
     cmake --build build --target package
     ```
 
     *NOTE: The package created will be optimized for the machine on which it has been built, but it could not run on other PCs with different hardware or different Windows version. If you want to create a "generic" package, change the first cmake command line as follows:*
+
     ```bash
     cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/darktable -DBINARY_PACKAGE_BUILD=ON -S . -B build
     ```
@@ -124,7 +142,6 @@ If you are in a hurry you can now run darktable by executing the `darktable.exe`
 
 If you like experimenting you could also install `mingw-w64-ucrt-x86_64-{clang,openmp}` and use that compiler instead of gcc/g++ by setting the `CC=clang` and `CXX=clang++` variables. Alternatively, you can use the CLANG64 environment instead of UCRT64 and try building darktable with its default toolchain (note that the prefix for installation of all the packages above then becomes `mingw-w64-clang-x86_64-`).
 
-
 Cross-platform compile on Linux
 -------------------------------
 
@@ -138,10 +155,11 @@ The tests have been done cross compiling on openSUSE. Since it's using a
 virtualized installation only used for this stuff you can safely do everything
 as root. It's also enough to install a server setup without X.
 
-- Grab the openSUSE install ISO from http://software.opensuse.org/122/en
+* Grab the openSUSE install ISO from <http://software.opensuse.org/122/en>
 (I used the 64 Bit version).
-- Install in Virtualbox.
-- Prepare the system:
+* Install in Virtualbox.
+* Prepare the system:
+
     ```sh
     #!/bin/sh
 
@@ -172,9 +190,9 @@ as root. It's also enough to install a server setup without X.
     sed -e 's:^#define PACKAGE:// #define PACKAGE:g' -i /usr/x86_64-w64-mingw32/sys-root/mingw/include/jconfig.h
     ```
 
-- Put the sources somewhere, probably by grabbing them from git: `git clone https://github.com/darktable-org/darktable.git`
-- cd into the freshly cloned source tree and edit `cmake/toolchain_mingw64.cmake` if needed, it should be ok if using the virtualized openSUSE environment as described here.
-- Build darktable using this script (save it as `build-win.sh`). Make sure to edit it to suit your environment, too, if needed. Again, if following these directions it should be working out of the box. Run the script from the root directory of the git clone (i.e., put it next to `build.sh`):
+* Put the sources somewhere, probably by grabbing them from git: `git clone https://github.com/darktable-org/darktable.git`
+* cd into the freshly cloned source tree and edit `cmake/toolchain_mingw64.cmake` if needed, it should be ok if using the virtualized openSUSE environment as described here.
+* Build darktable using this script (save it as `build-win.sh`). Make sure to edit it to suit your environment, too, if needed. Again, if following these directions it should be working out of the box. Run the script from the root directory of the git clone (i.e., put it next to `build.sh`):
 
     ```sh
     #!/bin/sh
@@ -248,8 +266,8 @@ as root. It's also enough to install a server setup without X.
     fi
     ```
 
-- Last but not least: `cd build-win; make install`
-- Now you have a Windows version of darktable in `/opt/darktable-win/`, which should be suited for 64 bit Windows installations. Before you can run it do `cp /usr/x86_64-w64-mingw32/sys-root/mingw/bin/*.dll /opt/darktable-win/bin/`
-- Done. Copy `/opt/darktable-win/` to a Windows box, go to the bin folder and double click `darktable.exe`.
+* Last but not least: `cd build-win; make install`
+* Now you have a Windows version of darktable in `/opt/darktable-win/`, which should be suited for 64 bit Windows installations. Before you can run it do `cp /usr/x86_64-w64-mingw32/sys-root/mingw/bin/*.dll /opt/darktable-win/bin/`
+* Done. Copy `/opt/darktable-win/` to a Windows box, go to the bin folder and double click `darktable.exe`.
 
 Have fun with this, report back your findings.
