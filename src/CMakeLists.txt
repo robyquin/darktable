@@ -417,6 +417,11 @@ include_directories(SYSTEM ${Sqlite3_INCLUDE_DIR})
 list(APPEND LIBS ${Sqlite3_LIBRARIES})
 add_definitions(${Sqlite3_DEFINITIONS})
 
+find_package(Postgres 13.00 REQUIRED)
+include_directories(SYSTEM ${Postgres_INCLUDE_DIR})
+list(APPEND LIBS ${Postgres_LIBRARIES})
+add_definitions(${Postgres_DEFINITIONS})
+
 foreach(lib ${OUR_LIBS} GIO GThread GModule PangoCairo Rsvg2 LibXml2 CURL PNG JPEG TIFF LCMS2 JsonGlib)
   find_package(${lib} REQUIRED)
   include_directories(SYSTEM ${${lib}_INCLUDE_DIRS})
